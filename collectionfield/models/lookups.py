@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+import django
 from django.db.models.lookups import Contains
 
 
@@ -19,9 +20,17 @@ class Has(Contains):
             )
 
     def get_prep_lookup(self):
-        return self.lhs.output_field.get_prep_lookup(
-            self.lookup_name, [self.rhs]
-        )
+        if django.VERSION >= (1, 10):
+            if hasattr(self.rhs, '_prepare'):
+                value = self.rhs._prepare(self.lhs.output_field)
+            else:
+                value = self.rhs
+            value = self.lhs.output_field.get_prep_value([value])
+        else:
+            value = self.lhs.output_field.get_prep_lookup(
+                self.lookup_name, [self.rhs]
+            )
+        return value
 
     def get_rhs_op(self, connection, rhs):
         return connection.operators['contains'] % rhs
@@ -36,9 +45,17 @@ class HasMany(Has):
         self.rhs_items = list(rhs)
 
     def get_prep_lookup(self):
-        return self.lhs.output_field.get_prep_lookup(
-            self.lookup_name, self.rhs
-        )
+        if django.VERSION >= (1, 10):
+            if hasattr(self.rhs, '_prepare'):
+                value = self.rhs._prepare(self.lhs.output_field)
+            else:
+                value = self.rhs
+            value = self.lhs.output_field.get_prep_value(value)
+        else:
+            value = self.lhs.output_field.get_prep_lookup(
+                self.lookup_name, self.rhs
+            )
+        return value
 
     def as_sql(self, compiler, connection):
         lhs, lhs_params = self.process_lhs(compiler, connection)

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import json
 from decimal import Decimal
 
+import django
 from django.utils import six
 from django.core.exceptions import ValidationError
 from django.core.serializers import serialize, deserialize
@@ -31,6 +32,9 @@ from .forms import (
     ChoiceMax2StringSetForm, ChoiceSortedIntegerListForm,
     ChoiceOptionalDecimalSetForm,
 )
+
+
+DJANGO_110 = django.VERSION >= (1, 10)
 
 
 class ModelSaveTestCase(TestCase):
@@ -851,7 +855,9 @@ class FormCollectionFieldTestCase(TestCase):
         bound_field = StringSetForm()['values']
         self.assertEqual(
             bound_field.as_widget(),
-            '<input id="id_values" name="values" type="text" />'
+            '<input id="id_values" name="values" type="text"{req} />'.format(
+                req=' required' if DJANGO_110 else ''
+            )
         )
 
     def test_html_widget_with_value(self):
@@ -859,7 +865,9 @@ class FormCollectionFieldTestCase(TestCase):
         self.assertEqual(
             bound_field.as_widget(),
             '<input id="id_values" name="values" type="text" '
-            'value="a, b, c" />'
+            'value="a, b, c"{req} />'.format(
+                req=' required' if DJANGO_110 else ''
+            )
         )
 
 
@@ -1126,7 +1134,7 @@ class FormCollectionChoiceFieldTestCase(TestCase):
         bound_field = GroupedChoiceDecimalTupleForm()['values']
         self.assertEqual(
             bound_field.as_widget(),
-            '<select multiple="multiple" id="id_values" name="values">\n'
+            '<select multiple="multiple" id="id_values" name="values"{req}>\n'
             '<optgroup label="Group 1">\n'
             '<option value="1.1">1-1</option>\n'
             '<option value="1.2">1-2</option>\n'
@@ -1135,18 +1143,22 @@ class FormCollectionChoiceFieldTestCase(TestCase):
             '<option value="2.1">2-1</option>\n'
             '<option value="2.2">2-2</option>\n'
             '</optgroup>\n'
-            '</select>'
+            '</select>'.format(
+                req=' required' if DJANGO_110 else ''
+            )
         )
 
     def test_html_widget_with_value(self):
         bound_field = ChoiceIntegerSetForm({'values': [1, 2]})['values']
         self.assertEqual(
             bound_field.as_widget(),
-            '<select multiple="multiple" id="id_values" name="values">\n'
+            '<select multiple="multiple" id="id_values" name="values"{req}>\n'
             '<option value="1" selected="selected">One</option>\n'
             '<option value="2" selected="selected">Two</option>\n'
             '<option value="3">Three</option>\n'
-            '<option value="4">Four</option>\n</select>'
+            '<option value="4">Four</option>\n</select>'.format(
+                req=' required' if DJANGO_110 else ''
+            )
         )
 
 
