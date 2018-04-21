@@ -4,3 +4,5 @@
 /.env/
 /.eggs/
 /.idea/
+/.tox/
+/*.egg-info/

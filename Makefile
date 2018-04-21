@@ -6,6 +6,7 @@ virtualenv:
 
 develop: virtualenv
 	.env/bin/pip install --upgrade setuptools
+	.env/bin/pip install tox
 	.env/bin/pip install wheel
 	.env/bin/pip install twine
 	.env/bin/pip install Django==$(DJANGO_VERSION)

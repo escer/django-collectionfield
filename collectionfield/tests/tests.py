@@ -853,7 +853,7 @@ class FormCollectionFieldTestCase(TestCase):
 
     def test_html_widget_without_value(self):
         bound_field = StringSetForm()['values']
-        self.assertEqual(
+        self.assertHTMLEqual(
             bound_field.as_widget(),
             '<input id="id_values" name="values" type="text"{req} />'.format(
                 req=' required' if DJANGO_110 else ''
@@ -862,7 +862,7 @@ class FormCollectionFieldTestCase(TestCase):
 
     def test_html_widget_with_value(self):
         bound_field = SortedStringListForm({'values': 'a, b, c'})['values']
-        self.assertEqual(
+        self.assertHTMLEqual(
             bound_field.as_widget(),
             '<input id="id_values" name="values" type="text" '
             'value="a, b, c"{req} />'.format(
@@ -1132,7 +1132,7 @@ class FormCollectionChoiceFieldTestCase(TestCase):
 
     def test_html_widget_without_value(self):
         bound_field = GroupedChoiceDecimalTupleForm()['values']
-        self.assertEqual(
+        self.assertHTMLEqual(
             bound_field.as_widget(),
             '<select multiple="multiple" id="id_values" name="values"{req}>\n'
             '<optgroup label="Group 1">\n'
@@ -1150,7 +1150,7 @@ class FormCollectionChoiceFieldTestCase(TestCase):
 
     def test_html_widget_with_value(self):
         bound_field = ChoiceIntegerSetForm({'values': [1, 2]})['values']
-        self.assertEqual(
+        self.assertHTMLEqual(
             bound_field.as_widget(),
             '<select multiple="multiple" id="id_values" name="values"{req}>\n'
             '<option value="1" selected="selected">One</option>\n'

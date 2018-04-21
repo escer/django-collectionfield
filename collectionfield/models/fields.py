@@ -220,10 +220,10 @@ class CollectionField(Field):
         else:
             return super(CollectionField, self).formfield(**kwargs)
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
+    def contribute_to_class(self, cls, name, **kwargs):
         """Overrides `get_FIELD_display` on model class"""
         super(CollectionField, self).contribute_to_class(
-            cls, name, virtual_only=virtual_only
+            cls, name, **kwargs
         )
         if self.choices:
             setattr(
