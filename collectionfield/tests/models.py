@@ -147,3 +147,18 @@ class Max10CharsStringListModel(models.Model):
 class Max5ItemsStringListModel(models.Model):
 
     values = CollectionField(max_items=5)
+
+
+class MultipleFieldsModel(models.Model):
+    
+    values = CollectionField(
+        choices=(
+            ('aaa', "AAA"),
+            ('bbb', "BBB"),
+            ('ccc', "CCC"),
+            ('ddd', "DDD"),
+        )
+    )
+    name = models.CharField(max_length=20)
+    active = models.BooleanField(default=True)
+

@@ -20,7 +20,8 @@ from .models import (
     DecimalSetModel, DefaultDecimalSetModel, SortedDecimalListModel,
     IntegerTupleModel, DefaultIntegerTupleModel, OptionalIntegerTupleModel,
     Max10CharsStringListModel, Max5ItemsStringListModel,
-    OptionalGroupedChoiceStringListModel, OptionalGroupedChoiceIntegerListModel
+    OptionalGroupedChoiceStringListModel, OptionalGroupedChoiceIntegerListModel,
+    MultipleFieldsModel
 )
 from .forms import (
     StringSetForm, OptionalStringSetForm, IntegerListForm, DecimalTupleForm,
@@ -438,6 +439,64 @@ class HasAnyLookupTestCase(TestCase):
                 )
             ),
             []
+        )
+
+    def test_multiple_filters(self):
+        obj1 = MultipleFieldsModel.objects.create(
+            values=['Aliens', 'Starships', 'Aliens'],
+            name='Adam',
+            active=True
+        )
+        obj2 = MultipleFieldsModel.objects.create(
+            values=['Lions', 'Jungle'],
+            name='John',
+            active=False
+        )
+        obj3 = MultipleFieldsModel.objects.create(
+            values=['Pyramids', 'Aliens', 'Lions'],
+            name='Henry',
+            active=True
+        )
+        obj4 = MultipleFieldsModel.objects.create(
+            values=['Lions', 'Jungle', 'Monkeys'],
+            name='John',
+            active=True
+        )
+        obj5 = MultipleFieldsModel.objects.create(
+            values=['Jungle', 'Lions', 'Aliens'],
+            name='Kate',
+            active=True
+        )
+
+        self.assertListEqual(
+            list(
+                MultipleFieldsModel.objects.filter(
+                    values__hasany=['Aliens', 'Monkeys'],
+                    active=True
+                )
+            ),
+            [obj1, obj3, obj4, obj5]
+        )
+
+        self.assertListEqual(
+            list(
+                MultipleFieldsModel.objects.filter(
+                    values__hasany=['Lions', 'Jungle'],
+                    name='John'
+                )
+            ),
+            [obj2, obj4]
+        )
+
+        self.assertListEqual(
+            list(
+                MultipleFieldsModel.objects.filter(
+                    values__hasany=['Lions', 'Jungle'],
+                    name='John',
+                    active=True
+                )
+            ),
+            [obj4]
         )
 
 

@@ -66,7 +66,7 @@ class HasMany(Has):
             rhs = self.get_rhs_op(connection, rhs)
             sql_items.append('%s %s' % (lhs, rhs))
             params.extend(lhs_params + rhs_params)
-        return self.join_conditions_with.join(sql_items), params
+        return '(%s)' % self.join_conditions_with.join(sql_items), params
 
     def get_rhs_op(self, connection, rhs):
         return connection.operators['contains'] % rhs
